@@ -342,6 +342,9 @@ class XmlEncoder extends SerializerAwareEncoder implements EncoderInterface, Dec
             $node->appendChild($child);
         } elseif ($val instanceof \Traversable) {
             $this->buildXml($node, $val);
+        } elseif ($val instanceof \DOMNode) {
+            $child = $this->dom->importNode($val, true);
+            $node->appendChild($child);
         } elseif (is_object($val)) {
             return $this->buildXml($node, $this->serializer->normalize($val, $this->format));
         } elseif (is_numeric($val)) {
@@ -350,9 +353,6 @@ class XmlEncoder extends SerializerAwareEncoder implements EncoderInterface, Dec
             return $this->appendCData($node, $val);
         } elseif (is_bool($val)) {
             return $this->appendText($node, (int) $val);
-        } elseif ($val instanceof \DOMNode) {
-            $child = $this->dom->importNode($val, true);
-            $node->appendChild($child);
         }
 
         return true;
